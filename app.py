@@ -1,0 +1,16 @@
+from flask import Flask, request, jsonify
+import joblib
+import numpy as np
+
+app = Flask(__name__)
+model = joblib.load("models/model.pkl")
+
+@app.route('/predict', methods=['POST'])
+def predict():
+    data = request.get_json()
+    features = np.array([[data['temperature'],data['vibration'],data['current']]])
+    pred = model.predict(features)
+
+    return jsonify({"result": int(pred[0])})
+
+app.run(debug=True)
